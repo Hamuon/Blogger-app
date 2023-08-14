@@ -4,10 +4,12 @@ import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 import { useAuthContext } from "@/hooks/useAuthContext";
+import { CircularProgress } from "@mui/material";
 
 export default function page() {
   const router = useRouter();
   const { user } = useAuthContext();
+  const [loading, setLoading] = useState(false);
   const [blog, setBlog] = useState({
     title: "",
     desc: "",
@@ -27,6 +29,8 @@ export default function page() {
 
   const submitHandler = async (e: any) => {
     e.preventDefault();
+    setLoading(true);
+
     try {
       await fetch("http://localhost:3000/api/create-blogs", {
         method: "POST",
@@ -44,6 +48,7 @@ export default function page() {
       toast.success("بلاگ با موفقیت ایجاد شد!", {
         position: toast.POSITION.TOP_CENTER,
       });
+      setLoading(false);
       router.push("/");
     } catch (error) {
       console.log(error);
@@ -97,7 +102,7 @@ export default function page() {
           id="formFile"
         />
         <button type="submit" className="px-10 py-3 rounded-lg border mt-5">
-          ایجاد بلاگ
+          {loading ? <CircularProgress /> : <p>ورود</p>}
         </button>
       </form>
     </div>
